@@ -35,14 +35,11 @@ jobs:
           mkdir sa-ai-markdown
           shopt -s dotglob
           mv * sa-ai-markdown/ 2>/dev/null || true
-          # Don't zip scripts directory in release
-          rm -rf sa-ai-markdown/scripts
           zip -r "sa-ai-markdown-${{ steps.vars.outputs.tag }}.zip" sa-ai-markdown/
 
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          files: sa-ai-markdown-${{ steps.vars.outputs.tag }}.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "sa-ai-markdown-${{ steps.vars.outputs.tag }}.zip"
+          token: ${{ secrets.GITHUB_TOKEN }}
