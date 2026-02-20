@@ -1,4 +1,5 @@
-[![WordPress](https://img.shields.io/badge/WordPress-%2321759B.svg?logo=wordpress&logoColor=white)](#) ![Packagist Version](https://img.shields.io/packagist/v/serkanalgur/sa-ai-markdown) [![PHP](https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white)](#) ![GitHub Release](https://img.shields.io/github/v/release/serkanalgur/sa-ai-markdown)
+[![WordPress](https://img.shields.io/badge/WordPress-%2321759B.svg?logo=wordpress&logoColor=white)](#) ![Packagist Version](https://img.shields.io/packagist/v/serkanalgur/sa-ai-markdown) [![PHP](https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white)](#) ![GitHub Release](https://img.shields.io/github/v/release/serkanalgur/sa-ai-markdown) ![GitHub License](https://img.shields.io/github/license/serkanalgur/sa-ai-markdown)
+
 
 
 ![Logo](assets/icon-256.png)
