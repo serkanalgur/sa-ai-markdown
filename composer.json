@@ -1,0 +1,26 @@
+{
+    "name": "serkanalgur/sa-ai-markdown",
+    "description": "Detects Accept: text/markdown and serves pre-generated Markdown versions of posts/pages for AI agents.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Serkan Algur",
+            "email": "serkan@algur.com.tr",
+            "homepage": "https://serkanalgur.com.tr"
+        }
+    ],
+    "require": {
+        "php": ">=7.3"
+    },
+    "autoload": {
+        "classmap": [
+            "includes/"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
+}

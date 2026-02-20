@@ -1,0 +1,52 @@
+name: "Release ZIP"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: "Build and Release"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Install Dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Clean up files
+        run: |
+          rm -rf .git .github tests composer.lock phpunit.xml .gitignore
+          # Remove other development files if any
+        
+      - name: Get tag version
+        id: vars
+        run: echo "tag=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Sync versions using script
+        id: sync
+        run: node scripts/sync-version.js ${{ steps.vars.outputs.tag }}
+
+      - name: ZIP plugin
+        run: |
+          mkdir sa-ai-markdown
+          shopt -s dotglob
+          mv * sa-ai-markdown/ 2>/dev/null || true
+          # Don't zip scripts directory in release
+          rm -rf sa-ai-markdown/scripts
+          zip -r "sa-ai-markdown-${{ steps.vars.outputs.tag }}.zip" sa-ai-markdown/
+
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: sa-ai-markdown-${{ steps.vars.outputs.tag }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

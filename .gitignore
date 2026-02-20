@@ -1,0 +1,41 @@
+# WordPress Plugin Development Artifacts
+
+# Log files and databases
+*.log
+*.sql
+*.sqlite
+
+# macOS specific files
+.DS_Store
+
+# Windows specific files
+Thumbs.db
+ehthumbs.db
+
+# IDE/Editor specific files (e.g., VS Code, Sublime, PhpStorm)
+.idea/
+.vscode/
+scripts/
+*.sublime-project
+*.sublime-workspace
+*.komodoproject
+
+# Dependency management and build tools
+/vendor/
+/node_modules/
+/bower_components/
+.sass-cache/
+/build/
+/dist/
+
+# Composer and related files (optional, if you manage dependencies)
+composer.lock
+/vendor/
+
+# Environment files
+.env
+.htaccess 
+
+# Any other specific files generated locally that shouldn't be committed
+# Example: a local configuration file
+# config-local.php 
