@@ -30,6 +30,59 @@ class SA_AI_Markdown_Generator {
 			'tags'      => wp_get_post_tags( $post->ID, [ 'fields' => 'names' ] ),
 		];
 
+		// Include featured image information if available
+		$thumbnail_url = '';
+		$thumbnail_alt = '';
+		if ( function_exists( 'get_post_thumbnail_id' ) ) {
+			$thumb_id = get_post_thumbnail_id( $post->ID );
+			if ( $thumb_id ) {
+				if ( function_exists( 'wp_get_attachment_url' ) ) {
+					$thumbnail_url = wp_get_attachment_url( $thumb_id );
+				} elseif ( function_exists( 'get_the_post_thumbnail_url' ) ) {
+					$thumbnail_url = get_the_post_thumbnail_url( $post->ID, 'full' );
+				}
+				if ( function_exists( 'get_post_meta' ) ) {
+					$thumbnail_alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
+				}
+			}
+		}
+
+		if ( $thumbnail_url ) {
+			$frontmatter['featured_image'] = $thumbnail_url;
+			$frontmatter['featured_image_alt'] = $thumbnail_alt;
+		}
+
+		// Description: use excerpt if available, else generate a 160-character summary
+		$description = '';
+		if ( function_exists( 'get_the_excerpt' ) ) {
+			$description = trim( (string) get_the_excerpt( $post ) );
+		}
+		if ( empty( $description ) ) {
+			$text = '';
+			if ( ! empty( $post->post_excerpt ) ) {
+				$text = $post->post_excerpt;
+			} else {
+				$text = $post->post_content;
+			}
+			$text = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5 );
+			if ( function_exists( 'wp_strip_all_tags' ) ) {
+				$clean = wp_strip_all_tags( $text );
+			} else {
+				$clean = trim( strip_tags( $text ) );
+			}
+			$clean = preg_replace( '/\s+/u', ' ', $clean );
+			$clean = trim( $clean );
+			if ( mb_strlen( $clean ) > 160 ) {
+				$description = rtrim( mb_substr( $clean, 0, 157 ) ) . '...';
+			} else {
+				$description = $clean;
+			}
+		}
+
+		if ( $description !== '' ) {
+			$frontmatter['description'] = $description;
+		}
+
 		$markdown = "---\n";
 		foreach ( $frontmatter as $key => $value ) {
 			if ( is_array( $value ) ) {
@@ -39,6 +92,12 @@ class SA_AI_Markdown_Generator {
 			}
 		}
 		$markdown .= "---\n\n";
+
+		// If a featured image was found, add it to the top of the Markdown body as an image
+		if ( ! empty( $frontmatter['featured_image'] ) ) {
+			$alt = isset( $frontmatter['featured_image_alt'] ) ? $frontmatter['featured_image_alt'] : '';
+			$markdown .= '![' . $this->quote( $alt ) . '](' . $frontmatter['featured_image'] . ")\n\n";
+		}
 
 		// Convert Gutenberg blocks or classic content
 		$content = $post->post_content;

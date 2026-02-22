@@ -63,6 +63,10 @@ Available under **Settings > AI Markdown**:
 
 ## Changelog
 
+### 1.0.2
+* Featured Image support
+* Description creation
+
 ### 1.0.1
 * Code Block Conversion Support (pre and code)
 
