@@ -16,7 +16,7 @@ class SA_AI_Markdown_Settings {
 			'AI Markdown Settings',
 			'AI Markdown',
 			'manage_options',
-			'wp-ai-markdown',
+			'sa-ai-markdown',
 			[ $this, 'render_settings_page' ]
 		);
 	}
@@ -87,7 +87,7 @@ class SA_AI_Markdown_Settings {
 
 			<h2>Manual Actions</h2>
 			<p>Click below to manually trigger the Markdown cache regeneration for all selected post types.</p>
-			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'options-general.php?page=wp-ai-markdown&action=regenerate_markdown' ), 'sa_ai_markdown_regenerate' ) ); ?>" class="button button-secondary">Regenerate Markdown Cache Now</a>
+			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'options-general.php?page=sa-ai-markdown&action=regenerate_markdown' ), 'sa_ai_markdown_regenerate' ) ); ?>" class="button button-secondary">Regenerate Markdown Cache Now</a>
 		</div>
 		<?php
 	}

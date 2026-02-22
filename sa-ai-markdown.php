@@ -2,9 +2,9 @@
 
 /*
 * Plugin Name:       AI Markdown Content Negotiator
-* Plugin URI:        https://github.com/serkanalgur/wp-ai-markdown
+* Plugin URI:        https://github.com/serkanalgur/sa-ai-markdown
 * Description:       Detects Accept: text/markdown and serves pre-generated Markdown versions of posts/pages.
-* Version:           1.0.0
+* Version:           1.0.1
 * Requires at least: 6.0
 * Tested up to: 6.9
 * Requires PHP:      7.3
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define constants
-define( 'SA_AI_MARKDOWN_VERSION', '1.0.0' );
+define( 'SA_AI_MARKDOWN_VERSION', '1.0.1' );
 define( 'SA_AI_MARKDOWN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SA_AI_MARKDOWN_URL', plugin_dir_url( __FILE__ ) );
 

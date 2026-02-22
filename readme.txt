@@ -52,5 +52,8 @@ We use a standard heuristic of ~4 characters per token to provide an estimate in
 
 == Changelog ==
 
+= 1.0.1 = 
+* Code Block Conversion Support (pre and code)
+
 = 1.0.0 =
 * Initial release.

@@ -97,11 +97,75 @@ class SA_AI_Markdown_Generator {
 		// Very basic regex-based conversion for common tags
 		$markdown = $html;
 
-		// Headings
-		$markdown = preg_replace( '/<h([1-6])>(.*?)<\/h\1>/i', "\n" . str_repeat( '#', 1 ) . ' $2' . "\n", $markdown );
-		
+		// Protect existing fenced code blocks (```...```) so they are not altered by tag stripping
+		$code_blocks = array();
+		$markdown = preg_replace_callback(
+			'/```([^\n\r]*)\n(.*?)\n```/s',
+			function ( $m ) use ( & $code_blocks ) {
+				$i = count( $code_blocks );
+				$code_blocks["__CB_{$i}__"] = "```" . $m[1] . "\n" . $m[2] . "\n```";
+				return "__CB_{$i}__";
+			},
+			$markdown
+		);
+
+		// Convert <pre><code>...</code></pre> and <pre>...</pre> to fenced code blocks
+		$markdown = preg_replace_callback(
+			'#<pre(?P<pre_attrs>[^>]*)>\s*(?:<code(?P<code_attrs>[^>]*)>)?(?P<code>.*?)(?:</code>)?\s*</pre>#is',
+			function ( $m ) use ( & $code_blocks ) {
+				$code = html_entity_decode( $m['code'] );
+				$attrs = $m['code_attrs'] . ' ' . $m['pre_attrs'];
+				$lang = '';
+				if ( preg_match( '/class=["\']([^"\']+)["\']/', $attrs, $cm ) ) {
+					if ( preg_match( '/(?:language-|lang-)([a-z0-9+-]+)/i', $cm[1], $lm ) ) {
+						$lang = strtolower( $lm[1] );
+					}
+				}
+
+				$code = rtrim( $code, "\n\r" );
+				// Determine longest run of backticks in code to choose a safe fence length
+				preg_match_all('/`+/', $code, $bt_matches);
+				$max_ticks = 0;
+				if ( ! empty( $bt_matches[0] ) ) {
+					foreach ( $bt_matches[0] as $run ) {
+						$len = strlen( $run );
+						if ( $len > $max_ticks ) {
+							$max_ticks = $len;
+						}
+					}
+				}
+				$fence = str_repeat( '`', max(3, $max_ticks + 1) );
+				if ( $lang ) {
+					$block = $fence . $lang . "\n" . $code . "\n" . $fence . "\n\n";
+				} else {
+					$block = $fence . "\n" . $code . "\n" . $fence . "\n\n";
+				}
+				$i = count( $code_blocks );
+				$placeholder = "__CB_{$i}__";
+				$code_blocks[ $placeholder ] = $block;
+				return $placeholder;
+			},
+			$markdown
+		);
+
+		// Convert inline <code>...</code> to backticks (avoid touching blocks already handled)
+		$markdown = preg_replace_callback(
+			'#<code(?P<attrs>[^>]*)>(?P<code>.*?)</code>#is',
+			function ( $m ) {
+				$code = html_entity_decode( $m['code'] );
+				if ( strpos( $code, '`' ) !== false ) {
+					return '``' . $code . '``';
+				}
+				return '`' . $code . '`';
+			},
+			$markdown
+		);
+
+		// Headings (preserve level)
+		$markdown = preg_replace( '/<h([1-6])>(.*?)<\/h\1>/i', "\n" . str_repeat( '#', (int) '\\1' ) . ' $2' . "\n", $markdown );
+
 		// Links
-		$markdown = preg_replace( '/<a href="(.*?)">(.*?)<\/a>/i', '[$2]($1)', $markdown );
+		$markdown = preg_replace( '/<a[^>]*href=["\'](.*?)["\'][^>]*>(.*?)<\/a>/i', '[$2]($1)', $markdown );
 
 		// Bold/Italic
 		$markdown = preg_replace( '/<(strong|b)>(.*?)<\/\1>/i', '**$2**', $markdown );
@@ -111,8 +175,16 @@ class SA_AI_Markdown_Generator {
 		$markdown = preg_replace( '/<li>(.*?)<\/li>/i', "- $1\n", $markdown );
 		$markdown = preg_replace( '/<(ul|ol)>|<\/\1>/i', '', $markdown );
 
-		// Strip remaining tags
+		// Strip remaining tags but keep the content we converted above
 		$markdown = wp_strip_all_tags( $markdown );
+
+		// Unescape HTML entities so code like &lt;?php becomes <?php
+		$markdown = html_entity_decode( $markdown, ENT_QUOTES | ENT_HTML5 );
+
+		// Restore protected fenced code blocks after unescaping
+		if ( ! empty( $code_blocks ) ) {
+			$markdown = str_replace( array_keys( $code_blocks ), array_values( $code_blocks ), $markdown );
+		}
 
 		return $markdown;
 	}

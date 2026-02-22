@@ -61,6 +61,14 @@ Available under **Settings > AI Markdown**:
 
 ![Settings Page Screenshot](screenshot.png)
 
+## Changelog
+
+### 1.0.1
+* Code Block Conversion Support (pre and code)
+
+### 1.0.0
+* Inital Release
+
 ## 📝 License
 
 GPL-2.0+
