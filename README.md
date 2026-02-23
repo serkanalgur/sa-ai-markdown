@@ -63,6 +63,9 @@ Available under **Settings > AI Markdown**:
 
 ## Changelog
 
+### 1.0.3
+* Ability to generate markdown when post changes.
+
 ### 1.0.2
 * Featured Image support
 * Description creation

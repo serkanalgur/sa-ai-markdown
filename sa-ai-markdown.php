@@ -4,7 +4,7 @@
 * Plugin Name:       AI Markdown Content Negotiator
 * Plugin URI:        https://github.com/serkanalgur/sa-ai-markdown
 * Description:       Detects Accept: text/markdown and serves pre-generated Markdown versions of posts/pages.
-* Version:           1.0.2
+* Version:           1.0.3
 * Requires at least: 6.0
 * Tested up to: 6.9
 * Requires PHP:      7.3

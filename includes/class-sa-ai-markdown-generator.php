@@ -65,11 +65,8 @@ class SA_AI_Markdown_Generator {
 				$text = $post->post_content;
 			}
 			$text = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5 );
-			if ( function_exists( 'wp_strip_all_tags' ) ) {
-				$clean = wp_strip_all_tags( $text );
-			} else {
-				$clean = trim( strip_tags( $text ) );
-			}
+			// prefer WP wrapper for stripping tags per coding standards
+			$clean = wp_strip_all_tags( $text );
 			$clean = preg_replace( '/\s+/u', ' ', $clean );
 			$clean = trim( $clean );
 			if ( mb_strlen( $clean ) > 160 ) {
