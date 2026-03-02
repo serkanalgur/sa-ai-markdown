@@ -63,7 +63,10 @@ Available under **Settings > AI Markdown**:
 ## Changelog
 
 ### 1.0.4
-* 
+* Security: Implemented Late Escaping for all echoed variables and generated data.
+* Security: Added nonces and strict data sanitization for admin settings.
+* Standards: Full compliance with WordPress PHP Coding Standards (WPCS).
+* Refactor: Added complete Docblock documentation and standardized all hook callbacks.
 
 ### 1.0.3
 * Ability to generate markdown when post changes.
