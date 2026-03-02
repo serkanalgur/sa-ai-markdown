@@ -38,11 +38,14 @@ class SA_AI_Markdown_Settings {
 		);
 	}
 
+	/**
+	 * Register plugin settings.
+	 */
 	public function register_settings() {
 		register_setting( 'sa_ai_markdown_settings', 'sa_ai_markdown_post_types', array( 'sanitize_callback' => array( $this, 'sanitize_post_types' ) ) );
 		register_setting( 'sa_ai_markdown_settings', 'sa_ai_markdown_content_signal', array( 'sanitize_callback' => 'sanitize_text_field' ) );
 
-		if ( isset( $_GET['action'] ) && $_GET['action'] === 'regenerate_markdown' && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_GET['_wpnonce'] ), 'sa_ai_markdown_regenerate' ) ) {
+		if ( isset( $_GET['action'] ) && 'regenerate_markdown' === $_GET['action'] && isset( $_GET['_wpnonce'] ) && wp_verify_nonce( sanitize_key( $_GET['_wpnonce'] ), 'sa_ai_markdown_regenerate' ) ) {
 			$cron = new SA_AI_Markdown_Cron();
 			$cron->process_all_posts();
 			add_settings_error( 'sa_ai_markdown_messages', 'sa_ai_markdown_message', 'Markdown cache regeneration triggered!', 'updated' );
@@ -51,6 +54,8 @@ class SA_AI_Markdown_Settings {
 
 	/**
 	 * Sanitize post types array.
+	 *
+	 * @param array $input The input array of post types.
 	 */
 	public function sanitize_post_types( $input ) {
 		if ( ! is_array( $input ) ) {
@@ -59,7 +64,9 @@ class SA_AI_Markdown_Settings {
 		return array_map( 'sanitize_key', $input );
 	}
 
-
+	/**
+	 * Render the settings page.
+	 */
 	public function render_settings_page() {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
@@ -82,7 +89,7 @@ class SA_AI_Markdown_Settings {
 						<td>
 		<?php foreach ( $all_post_types as $type ) : ?>
 								<label>
-									<input type="checkbox" name="sa_ai_markdown_post_types[]" value="<?php echo esc_attr( $type->name ); ?>" <?php checked( in_array( $type->name, (array) $selected_types ) ); ?>>
+									<input type="checkbox" name="sa_ai_markdown_post_types[]" value="<?php echo esc_attr( $type->name ); ?>" <?php checked( in_array( $type->name, (array) $selected_types, true ) ); ?>>
 			<?php echo esc_html( $type->label ); ?>
 								</label><br>
 		<?php endforeach; ?>

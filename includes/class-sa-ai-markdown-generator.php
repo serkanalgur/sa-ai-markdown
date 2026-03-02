@@ -44,7 +44,7 @@ class SA_AI_Markdown_Generator {
 			'tags'       => wp_get_post_tags( $post->ID, array( 'fields' => 'names' ) ),
 		);
 
-		// Include featured image information if available
+		// Include featured image information if available.
 		$thumbnail_url = '';
 		$thumbnail_alt = '';
 		if ( function_exists( 'get_post_thumbnail_id' ) ) {
@@ -66,7 +66,7 @@ class SA_AI_Markdown_Generator {
 			$frontmatter['featured_image_alt'] = $thumbnail_alt;
 		}
 
-		// Description: use excerpt if available, else generate a 160-character summary
+		// Description: use excerpt if available, else generate a 160-character summary.
 		$description = '';
 		if ( function_exists( 'get_the_excerpt' ) ) {
 			$description = trim( (string) get_the_excerpt( $post ) );
@@ -79,7 +79,7 @@ class SA_AI_Markdown_Generator {
 				$text = $post->post_content;
 			}
 			$text = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5 );
-			// prefer WP wrapper for stripping tags per coding standards
+			// Prefer WP wrapper for stripping tags per coding standards.
 			$clean = wp_strip_all_tags( $text );
 			$clean = preg_replace( '/\s+/u', ' ', $clean );
 			$clean = trim( $clean );
@@ -90,7 +90,7 @@ class SA_AI_Markdown_Generator {
 			}
 		}
 
-		if ( $description !== '' ) {
+		if ( '' !== $description ) {
 			$frontmatter['description'] = $description;
 		}
 
@@ -104,13 +104,13 @@ class SA_AI_Markdown_Generator {
 		}
 		$markdown .= "---\n\n";
 
-		// If a featured image was found, add it to the top of the Markdown body as an image
+		// If a featured image was found, add it to the top of the Markdown body as an image.
 		if ( ! empty( $frontmatter['featured_image'] ) ) {
 			$alt       = isset( $frontmatter['featured_image_alt'] ) ? $frontmatter['featured_image_alt'] : '';
 			$markdown .= '![' . $this->quote( $alt ) . '](' . $frontmatter['featured_image'] . ")\n\n";
 		}
 
-		// Convert Gutenberg blocks or classic content
+		// Convert Gutenberg blocks or classic content.
 		$content = $post->post_content;
 		if ( has_blocks( $content ) ) {
 			$markdown .= $this->convert_blocks_to_markdown( $content );
@@ -123,6 +123,9 @@ class SA_AI_Markdown_Generator {
 
 	/**
 	 * Basic block-to-markdown conversion.
+	 *
+	 * @param string $content The block content.
+	 * @return string Markdown output.
 	 */
 	private function convert_blocks_to_markdown( $content ) {
 		$blocks = parse_blocks( $content );
@@ -150,7 +153,7 @@ class SA_AI_Markdown_Generator {
 						$output .= "```\n" . wp_strip_all_tags( $block['innerHTML'] ) . "\n```\n\n";
 						break;
 					default:
-						// Fallback for other blocks
+						// Fallback for other blocks.
 						$output .= wp_strip_all_tags( render_block( $block ) ) . "\n\n";
 						break;
 				}
@@ -162,12 +165,15 @@ class SA_AI_Markdown_Generator {
 
 	/**
 	 * Simple HTML to Markdown fallback.
+	 *
+	 * @param string $html The HTML content to convert.
+	 * @return string Markdown output.
 	 */
 	private function convert_html_to_markdown( $html ) {
-		// Very basic regex-based conversion for common tags
+		// Very basic regex-based conversion for common tags.
 		$markdown = $html;
 
-		// Protect existing fenced code blocks (```...```) so they are not altered by tag stripping
+		// Protect existing fenced code blocks (```...```) so they are not altered by tag stripping.
 		$code_blocks = array();
 		$markdown    = preg_replace_callback(
 			'/```([^\n\r]*)\n(.*?)\n```/s',
@@ -179,7 +185,7 @@ class SA_AI_Markdown_Generator {
 			$markdown
 		);
 
-		// Convert <pre><code>...</code></pre> and <pre>...</pre> to fenced code blocks
+		// Convert <pre><code>...</code></pre> and <pre>...</pre> to fenced code blocks.
 		$markdown = preg_replace_callback(
 			'#<pre(?P<pre_attrs>[^>]*)>\s*(?:<code(?P<code_attrs>[^>]*)>)?(?P<code>.*?)(?:</code>)?\s*</pre>#is',
 			function ( $m ) use ( &$code_blocks ) {
@@ -193,7 +199,7 @@ class SA_AI_Markdown_Generator {
 				}
 
 				$code = rtrim( $code, "\n\r" );
-				// Determine longest run of backticks in code to choose a safe fence length
+				// Determine longest run of backticks in code to choose a safe fence length.
 				preg_match_all( '/`+/', $code, $bt_matches );
 				$max_ticks = 0;
 				if ( ! empty( $bt_matches[0] ) ) {
@@ -218,12 +224,12 @@ class SA_AI_Markdown_Generator {
 			$markdown
 		);
 
-		// Convert inline <code>...</code> to backticks (avoid touching blocks already handled)
+		// Convert inline <code>...</code> to backticks (avoid touching blocks already handled).
 		$markdown = preg_replace_callback(
 			'#<code(?P<attrs>[^>]*)>(?P<code>.*?)</code>#is',
 			function ( $m ) {
 				$code = html_entity_decode( $m['code'] );
-				if ( strpos( $code, '`' ) !== false ) {
+				if ( false !== strpos( $code, '`' ) ) {
 					return '``' . $code . '``';
 				}
 				return '`' . $code . '`';
@@ -231,27 +237,27 @@ class SA_AI_Markdown_Generator {
 			$markdown
 		);
 
-		// Headings (preserve level)
+		// Headings (preserve level).
 		$markdown = preg_replace( '/<h([1-6])>(.*?)<\/h\1>/i', "\n" . str_repeat( '#', (int) '\\1' ) . ' $2' . "\n", $markdown );
 
-		// Links
+		// Links.
 		$markdown = preg_replace( '/<a[^>]*href=["\'](.*?)["\'][^>]*>(.*?)<\/a>/i', '[$2]($1)', $markdown );
 
-		// Bold/Italic
+		// Bold/Italic.
 		$markdown = preg_replace( '/<(strong|b)>(.*?)<\/\1>/i', '**$2**', $markdown );
 		$markdown = preg_replace( '/<(em|i)>(.*?)<\/\1>/i', '*$2*', $markdown );
 
-		// Lists
+		// Lists.
 		$markdown = preg_replace( '/<li>(.*?)<\/li>/i', "- $1\n", $markdown );
 		$markdown = preg_replace( '/<(ul|ol)>|<\/\1>/i', '', $markdown );
 
-		// Strip remaining tags but keep the content we converted above
+		// Strip remaining tags but keep the content we converted above.
 		$markdown = wp_strip_all_tags( $markdown );
 
-		// Unescape HTML entities so code like &lt;?php becomes <?php
+		// Unescape HTML entities so code like &lt;?php becomes <?php.
 		$markdown = html_entity_decode( $markdown, ENT_QUOTES | ENT_HTML5 );
 
-		// Restore protected fenced code blocks after unescaping
+		// Restore protected fenced code blocks after unescaping.
 		if ( ! empty( $code_blocks ) ) {
 			$markdown = str_replace( array_keys( $code_blocks ), array_values( $code_blocks ), $markdown );
 		}
@@ -261,15 +267,21 @@ class SA_AI_Markdown_Generator {
 
 	/**
 	 * Estimate token count based on heuristic.
+	 *
+	 * @param string $content The markdown content.
+	 * @return int Token count.
 	 */
 	public static function estimate_markdown_tokens( $content ) {
-		// ~4 characters per token
+		// ~4 characters per token.
 		$char_count = mb_strlen( $content );
 		return ceil( $char_count / 4 );
 	}
 
 	/**
 	 * Helper to quote YAML strings.
+	 *
+	 * @param string $str The string to quote.
+	 * @return string Quoted string.
 	 */
 	private function quote( $str ) {
 		return '"' . str_replace( '"', '\"', $str ) . '"';

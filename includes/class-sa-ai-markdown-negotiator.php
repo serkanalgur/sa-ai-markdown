@@ -43,6 +43,7 @@ class SA_AI_Markdown_Negotiator {
 			// However, standard REST usage usually expects JSON.
 			// For simplicity and following the "serve markdown instead of HTML" goal,
 			// we focus on the template_redirect for now.
+			return $result;
 		}
 		return $result;
 	}
@@ -53,11 +54,11 @@ class SA_AI_Markdown_Negotiator {
 	public function detect_and_serve_markdown() {
 		$accept_header = isset( $_SERVER['HTTP_ACCEPT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_ACCEPT'] ) ) : '';
 
-		if ( strpos( $accept_header, 'text/markdown' ) === false ) {
+		if ( false === strpos( $accept_header, 'text/markdown' ) ) {
 			return;
 		}
 
-		// Ensure we are on a single post/page
+		// Ensure we are on a single post/page.
 		if ( ! is_singular() ) {
 			return;
 		}
@@ -66,7 +67,7 @@ class SA_AI_Markdown_Negotiator {
 		$markdown = get_post_meta( $post_id, SA_AI_Markdown_Cron::META_KEY_MARKDOWN, true );
 		$tokens   = get_post_meta( $post_id, SA_AI_Markdown_Cron::META_KEY_TOKENS, true );
 
-		// If cache doesn't exist, generate it on the fly (fallback)
+		// If cache doesn't exist, generate it on the fly (fallback).
 		if ( empty( $markdown ) ) {
 			$generator = new SA_AI_Markdown_Generator();
 			$post      = get_post( $post_id );
@@ -74,14 +75,14 @@ class SA_AI_Markdown_Negotiator {
 			$tokens    = SA_AI_Markdown_Generator::estimate_markdown_tokens( $markdown );
 		}
 
-		// Security: ensures no private/logged-in data leaks
+		// Security: ensures no private/logged-in data leaks.
 		// We could potentially use wp_logout() here if we wanted to be extreme,
 		// but standardizing on non-logged-in context for AI agents is safer.
 		// For now, we'll just serve the content.
 
 		$signal = $this->get_content_signal( $post_id );
 
-		// Headers
+		// Headers.
 		header( 'Content-Type: text/markdown; charset=UTF-8' );
 		header( 'X-Markdown-Tokens: ' . (int) $tokens );
 		header( 'X-Content-Signal: ' . esc_attr( $signal ) );
@@ -93,6 +94,8 @@ class SA_AI_Markdown_Negotiator {
 
 	/**
 	 * Generate dynamic X-Content-Signal header.
+	 *
+	 * @param int $post_id The post ID.
 	 */
 	private function get_content_signal( $post_id ) {
 		$post       = get_post( $post_id );
@@ -100,7 +103,7 @@ class SA_AI_Markdown_Negotiator {
 		$categories = wp_get_post_categories( $post_id, array( 'fields' => 'names' ) );
 
 		$depth = 'general';
-		if ( in_array( 'Technical', $categories ) || in_array( 'Code', $categories ) ) {
+		if ( in_array( 'Technical', $categories, true ) || in_array( 'Code', $categories, true ) ) {
 			$depth = 'technical';
 		}
 
