@@ -1,4 +1,4 @@
-[![WordPress](https://img.shields.io/badge/WordPress-%2321759B.svg?logo=wordpress&logoColor=white)](#) ![Packagist Version](https://img.shields.io/packagist/v/serkanalgur/markdown-content-negotiator-for-llms) [![PHP](https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white)](#) ![GitHub Release](https://img.shields.io/github/v/release/serkanalgur/markdown-content-negotiator-for-llms) ![GitHub License](https://img.shields.io/github/license/serkanalgur/markdown-content-negotitator-for-llms)
+[![WordPress](https://img.shields.io/badge/WordPress-%2321759B.svg?logo=wordpress&logoColor=white)](#) ![Packagist Version](https://img.shields.io/packagist/v/serkanalgur/markdown-content-negotiator-for-llms) [![PHP](https://img.shields.io/badge/php-%23777BB4.svg?&logo=php&logoColor=white)](#) ![GitHub Release](https://img.shields.io/github/v/release/serkanalgur/markdown-content-negotiator-for-llms) ![GitHub License](https://img.shields.io/github/license/serkanalgur/markdown-content-negotiator-for-llms)
 
 ![Logo](assets/icon-256.png)
 ## Markdown Content Negotiator for LLMs
