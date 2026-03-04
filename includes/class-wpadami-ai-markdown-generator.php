@@ -75,7 +75,7 @@ class WPADAMI_AI_Markdown_Generator {
 			} else {
 				$text = $post->post_content;
 			}
-			$text = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5 );
+			$text  = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5 );
 			$clean = wp_strip_all_tags( $text );
 			$clean = preg_replace( '/\s+/u', ' ', $clean );
 			$clean = trim( $clean );
