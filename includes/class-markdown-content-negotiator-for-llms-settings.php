@@ -32,7 +32,7 @@ class Markdown_Content_Negotiator_For_LLMs_Settings {
 			'Markdown Content Negotiator Settings',
 			'Markdown Content Negotiator',
 			'manage_options',
-			'markdown-content-negotitator-for-llms',
+			'markdown-content-negotiator-for-llms',
 			array( $this, 'render_settings_page' )
 		);
 	}
@@ -110,7 +110,7 @@ class Markdown_Content_Negotiator_For_LLMs_Settings {
 
 			<h2>Manual Actions</h2>
 			<p>Click below to manually trigger the Markdown cache regeneration for all selected post types.</p>
-			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'options-general.php?page=markdown-content-negotitator-for-llms&action=regenerate_markdown' ), 'markdown_content_negotitator_for_llms_regenerate' ) ); ?>" class="button button-secondary">Regenerate Markdown Cache Now</a>
+			<a href="<?php echo esc_url( wp_nonce_url( admin_url( 'options-general.php?page=markdown-content-negotiator-for-llms&action=regenerate_markdown' ), 'markdown_content_negotitator_for_llms_regenerate' ) ); ?>" class="button button-secondary">Regenerate Markdown Cache Now</a>
 		</div>
 		<?php
 	}

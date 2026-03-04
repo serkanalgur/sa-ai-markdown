@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Markdown Content Negotiator for LLMs
- * Plugin URI:        https://github.com/serkanalgur/markdown-content-negotitator-for-llms
+ * Plugin URI:        https://github.com/serkanalgur/markdown-content-negotiator-for-llms
  * Description:       Detects Accept: text/markdown and serves pre-generated Markdown versions of posts/pages.
  * Version:           1.0.7
  * Requires at least: 6.0
